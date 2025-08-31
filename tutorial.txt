@@ -1,4 +1,10 @@
 
+To run fronted : npm run dev
+To run backedn : npm start
+
+Tailwind CSS with Vite :
+https://tailwindcss.com/docs/installation/using-vite
+
 {
   "bookTitle": "Gather Me",
   "authorName": "Glory Edim",
