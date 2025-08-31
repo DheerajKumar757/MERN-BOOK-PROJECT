@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -17,8 +18,6 @@ app.get('/', (req, res) => {
 })
 
 // mongoDB configuration
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = process.env.MONGO_URL;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -34,6 +33,61 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    // create a collection of documents
+    const booksCollections = client.db("dheeraj-book-store").collection("books")
+
+    // insert a book to the collection
+    app.post("/upload-book", async (req, res) => {
+      const data = req.body;
+      const result = await booksCollections.insertOne(data);
+      res.send(result);
+    });
+
+    // get all books from the collection
+    app.get("/all-books", async (req, res) => {
+      const books = booksCollections.find();
+      const result = await books.toArray();
+      res.send(result);
+    });
+
+    // update a book data
+    app.patch("/book/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateBookData = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+
+      const updateDoc = {
+        $set: {
+          ...updateBookData
+        }
+      }
+
+      // update
+      const result = await booksCollections.updateOne(filter, updateDoc, options);
+      res.send(result);
+
+    });
+
+    // delete a book
+    app.delete("/book/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await booksCollections.deleteOne(filter);
+      res.send(result);
+    });
+
+    // find by category
+    app.get("/get-books", async (req, res) => {
+      let query = {};
+      if (req.query?.category) {
+        query = {category: req.query.category}
+      }
+      const result = await booksCollections.find(query).toArray();
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -42,6 +96,7 @@ async function run() {
     // await client.close(); // Commented out to keep the connection alive
   }
 }
+
 run().catch(console.dir);
 
 
