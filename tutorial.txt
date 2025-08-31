@@ -1,4 +1,7 @@
 
+React Icons
+https://react-icons.github.io/react-icons/
+
 In Tailwind v4.1, the default setup no longer automatically generates a tailwind.config.js file when we install Tailwind in the vite project.
 
 To run fronted : npm run dev
