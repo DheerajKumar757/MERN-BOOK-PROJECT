@@ -6,6 +6,8 @@ Time : 2:15:00
     border: 1px dashed red;
   }
 
+-> Directly get different components for visuals in page
+https://swiperjs.com/get-started
 
 React Icons
 https://react-icons.github.io/react-icons/
